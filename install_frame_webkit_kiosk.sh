@@ -24,7 +24,7 @@
 #                                                                                          #
 ############################################################################################
 
-KIOSK_VERSION="00.14"
+KIOSK_VERSION="00.15"
 BOOT_SCRIPT=/var/kiosk/service/kiosk_boot.sh
 BOOT_SERVICENAME=kiosk_boot
 SHUTDOWN_SCRIPT=/var/kiosk/service/kiosk_shutdown.sh
