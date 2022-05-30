@@ -1,0 +1,48 @@
+#!/bin/bash
+
+############################################################################################
+#                                                                                          #
+# Configuracion  (frame-webkit-kiosk)                                                          #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Autor         : Felipe Muñoz Brieva - digitaliza.aapp@gmail.com                          #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Modificaciones:                                                                          #
+#                                                                                          #
+# 20/05/2022      Versión inicial                                                          #
+#   Felipe                                                                                 #
+#                                                                                          #
+############################################################################################
+
+LANGUAGE="es"
+
+TIEMPO_ESPERA_MENU=5
+TIEMPO_ESPERA_MENSAJE=3
+
+MODE_MENU="menu"
+MODE_INSTALL="install"
+MODE_CHG_URL="chg-url"
+MODE_ADD_CRT="add-crt"
+MODE_ADMIN="admin"
+
+CMDLINE="/proc/cmdline"
+
+FOLDER_KIOSK="/var/kiosk"
+
+FILE_KIOSK_LANG=$FOLDER_KIOSK"/lang/"
+FILE_KIOSK_LIB=$FOLDER_KIOSK"/lib/kiosk_lib"
+FILE_KIOSK_URL=$FOLDER_KIOSK"/url/kiosk_url"
+FILE_KIOSK_URL_DEFAULT=$FOLDER_KIOSK"/url/kiosk_url_default"
+FILE_KIOSK_URL_TMP="/tmp/kiosk_url_tmp"
+FILE_KIOSK_MENU_PASSWORD="/var/kiosk/sec/kiosk_menu_pwd"
+
+XINITRC_MENU=$FOLDER_KIOSK"/xinitrc/xinitrc_menu"
+XINITRC_INSTALL=$FOLDER_KIOSK"/xinitrc/xinitrc_install"
+XINITRC_CHG_URL=$FOLDER_KIOSK"/xinitrc/xinitrc_chg_url"
+XINITRC_ADD_CRT=$FOLDER_KIOSK"/xinitrc/xinitrc_add_crt"
+
+. $FILE_KIOSK_LANG$LANGUAGE
+

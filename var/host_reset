@@ -1,0 +1,18 @@
+clear
+
+echo "Cambiar modo de auditoria en apparmor (quiet)..."
+echo ""
+echo -n quiet >/sys/module/apparmor/parameters/audit
+
+echo "Borrar ficheros..................................."
+echo ""
+truncate -s 0 /var/log/syslog
+truncate -s 0 /var/log/kern.log
+truncate -s 0 /var/kiosk/url/kiosk_url
+truncate -s 0 /var/kiosk/sec/kiosk_menu_pwd
+rm -rf /Certificados/*
+rm /root/.bash_history
+
+echo "Desactivar demonio Ubuntu-Frame..................."
+echo ""
+snap set ubuntu-frame daemon=false

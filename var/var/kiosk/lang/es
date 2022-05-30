@@ -1,0 +1,28 @@
+ACEPTAR="Aceptar"
+CANCELAR="Cancelar"
+
+MENU_OPCION_KIOSK="Iniciar quiosco (Opción automática por defecto)"
+MENU_OPCION_INSTALL="Instalar quiosco en disco"
+MENU_OPCION_CHG_URL="Cambiar URL del quiosco"
+MENU_OPCION_ADD_CRT="Añadir certificado (*.crt)"
+MENU_OPCION_MENU_CHG_PWD="Crear/cambiar palabra de paso del menu"
+MENU_OPCION_ADMIN="Modo Administrador"
+
+CHG_TITULO="https://github.com/digitaliza-aapp"
+CHG_TEXTO="URL del quiosco (Debe comenzar por http://  https://"
+CHG_FIJAR="Fijar URL para el quiosco:CHK"
+
+CRT_TITULO="Seleccionar fichero CRT"
+
+MSG_TITULO="https://github.com/digitaliza-aapp"
+MSG_TEXTO="Quiosco (ubuntu-frame)"
+MSG_SELECCION="Seleccione una opcion"
+MSG_PASSWORD_TITULO="Introducir contraseña para opciones de menu"
+MSG_PASSWORD="Contraseña"
+MSG_PASSWORD_CHECK="Contraseña (Chequeo)"
+
+MSG_CERTIFICADO_TITULO="Seleccione un archivo con el certificado"
+MSG_CERTIFICADO="Certificado"
+
+MSG_ERROR_PWD="ERROR: PALABRA DE PASO INCORRECTA"
+MSG_ERROR_PWD_CHG="ERROR: PALABRAS DE PASO NO COINCIDEN"

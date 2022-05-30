@@ -1,0 +1,244 @@
+#!/bin/bash
+
+############################################################################################
+#                                                                                          #
+# kiosk_lib  (frame-webkit-kiosk)                                                          #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Autor         : Felipe Muñoz Brieva - digitaliza.aapp@gmail.com                          #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Modificaciones:                                                                          #
+#                                                                                          #
+# 20/05/2022      Versión inicial                                                          #
+#   Felipe                                                                                 #
+#                                                                                          #
+############################################################################################
+
+. /var/kiosk/kiosk_config
+
+get_file_kiosk_url() {
+
+   if [ -z "$kiosk_url" ]; then
+        
+        if [ -z "$(head -n 1 $FILE_KIOSK_URL)" ]; then
+
+             kiosk_url=$(head -n 1 $FILE_KIOSK_URL_DEFAULT)
+
+           else 
+
+	     kiosk_url=$(head -n 1 $FILE_KIOSK_URL)
+	fi
+
+   fi
+
+}
+
+check_prefix_url () {
+
+   regex='^(https?|ftp|file)://.+'
+
+   if [[ $kiosk_url =~ $regex ]]
+     then
+        url_prefix="TRUE"
+     else
+        url_prefix="FALSE"
+   fi
+
+   # Si $kiosk_url no contiene datos se utilizará en valor por defecto 
+   if [ -z "$kiosk_url" ]; then
+        url_prefix="TRUE"
+   fi
+
+}
+
+kiosk_sha256 () {
+
+    echo $(echo -n $1 | sha256sum | awk '{print $1}')
+}
+
+
+kiosk_mensaje () {
+
+   yad --title="$MSG_TITULO" \
+       --center \
+       --width=350 \
+       --borders=30 \
+       --timeout=$TIEMPO_ESPERA_MENSAJE \
+       --no-buttons \
+       --timeout-indicator=bottom \
+       --text="$mensaje" \
+       --text-align=center 
+
+   mensaje=""
+}
+
+kiosk_menu_chg_pwd () {
+
+   kiosk_menu_check_pwd
+
+   if [ "$kiosk_menu_pwd_ok" == "FALSE" ]; then
+        kiosk_menu
+	return
+   fi
+
+   resultado=$(yad --form \
+            --title="$MSG_TITULO" \
+            --text="$MSG_PASSWORD_TITULO" \
+            --borders=10 \
+            --center \
+            --field="$MSG_PASSWORD":H \
+            --field="$MSG_PASSWORD_CHECK":H )
+
+   ans=$?
+   
+   if [ $ans -eq 0 ]
+   then
+       menu_passwd_chg=$(echo $resultado | awk 'BEGIN {FS="|" } { print $1 }')
+       menu_passwd_chg_check=$(echo $resultado | awk 'BEGIN {FS="|" } { print $2 }')
+   fi
+
+   if [ "$menu_passwd_chg" == "$menu_passwd_chg_check" ]; then
+        echo $(kiosk_sha256 "$menu_passwd_chg")  > "$FILE_KIOSK_MENU_PASSWORD"
+     else
+	mensaje="$MSG_ERROR_PWD_CHG"
+	kiosk_mensaje
+   fi
+
+   kiosk_menu
+   
+}
+
+kiosk_menu_check_pwd () {
+
+   kiosk_menu_pwd="$(head -n 1 $FILE_KIOSK_MENU_PASSWORD)"
+
+   if [ -z "$kiosk_menu_pwd" ]; then
+	kiosk_menu_pwd_ok="TRUE"
+	return
+   fi
+
+   resultado=$(yad --form \
+               --title="$MSG_TITULO" \
+               --borders=10 \
+               --center \
+               --field="$MSG_PASSWORD":H )
+   ans=$?
+
+   if [ $ans -eq 0 ]
+   then
+       menu_passwd=$(echo $resultado | awk 'BEGIN {FS="|" } { print $1 }')
+   fi
+
+if [ $(kiosk_sha256 "$menu_passwd")  == "$kiosk_menu_pwd" ]; then
+	kiosk_menu_pwd_ok="TRUE"
+     else
+	kiosk_menu_pwd_ok="FALSE"
+	mensaje=$MSG_ERROR_PWD
+	kiosk_mensaje
+   fi
+    
+}
+
+kiosk_show () {
+
+   get_file_kiosk_url 
+   snap set wpe-webkit-mir-kiosk url=$kiosk_url
+   snap set ubuntu-frame daemon=true
+
+   echo -n quiet >/sys/module/apparmor/parameters/audit
+
+   wpe-webkit-mir-kiosk.cog 
+}
+
+kiosk_hide () {
+
+   snap set ubuntu-frame daemon=false
+
+}
+
+kiosk_default () {
+
+   # Si no existe una URL definida solicitarla 
+   if [ -z "$(head -n 1 $FILE_KIOSK_URL)" ]; then
+
+        kiosk_hide
+        startx $XINITRC_CHG_URL --
+
+        kiosk_url=$(head -n 1 $FILE_KIOSK_URL_TMP)
+
+   fi
+
+   kiosk_show
+
+}
+
+kiosk_menu () {
+
+   kiosk_hide 
+   startx $XINITRC_MENU --
+
+}
+
+kiosk_install () {
+
+   kiosk_menu_check_pwd
+
+   if [ "$kiosk_menu_pwd_ok" == "FALSE" ]; then
+        kiosk_menu
+	return
+   fi
+
+   kiosk_hide 
+   startx $XINITRC_INSTALL --
+   reboot
+
+}
+
+kiosk_chg_url () {
+
+   kiosk_menu_check_pwd
+
+   if [ "$kiosk_menu_pwd_ok" == "FALSE" ]; then
+        kiosk_menu
+	return
+   fi
+
+   kiosk_hide
+   startx $XINITRC_CHG_URL --
+
+   kiosk_url=$(head -n 1 $FILE_KIOSK_URL_TMP)
+
+   kiosk_show
+
+}
+
+kiosk_add_crt () {
+
+   kiosk_menu_check_pwd
+
+   if [ "$kiosk_menu_pwd_ok" == "FALSE" ]; then
+        kiosk_menu
+	return
+   fi
+
+   kiosk_hide 
+   startx $XINITRC_ADD_CRT --
+
+}
+
+kiosk_admin () {
+
+   kiosk_menu_check_pwd
+
+   if [ "$kiosk_menu_pwd_ok" == "FALSE" ]; then
+        kiosk_menu
+	return
+   fi
+
+   kiosk_hide 
+
+}
+

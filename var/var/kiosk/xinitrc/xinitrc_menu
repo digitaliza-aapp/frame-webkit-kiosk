@@ -1,0 +1,81 @@
+#!/bin/bash
+
+############################################################################################
+#                                                                                          #
+# xinitrc_menu: Leer URL inicial del quiosco  (frame-webkit-kiosk)                         #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Autor         : Felipe Muñoz Brieva - digitaliza.aapp@gmail.com                          #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Modificaciones:                                                                          #
+#                                                                                          #
+# 20/05/2022      Versión inicial                                                          #
+#   Felipe                                                                                 #
+#                                                                                          #
+############################################################################################
+
+. /var/kiosk/kiosk_config
+
+. $FILE_KIOSK_LIB
+
+xsetroot -cursor_name arrow 
+
+resultado=$(yad --list \
+                 --title="$MSG_TITULO" \
+                 --center \
+                 --height=300 \
+                 --width=650 \
+                 --timeout=$TIEMPO_ESPERA_MENU \
+		 --timeout-indicator=bottom \
+                 --text="$MSG_TEXTO" \
+                 --radiolist \
+                 --column="" \
+                 --column="$MSG_SELECCION" \
+                   TRUE "$MENU_OPCION_KIOSK" \
+                   FALSE "$MENU_OPCION_INSTALL" \
+                   FALSE "$MENU_OPCION_CHG_URL" \
+                   FALSE "$MENU_OPCION_ADD_CRT" \
+                   FALSE "$MENU_OPCION_MENU_CHG_PWD" \
+                   FALSE "$MENU_OPCION_ADMIN" \
+                 --button="gtk-cancel:1" \
+                 --button="gtk-ok:0" ) boton=$?
+
+if [ $boton = "0" ]; then
+  menu=$(echo $resultado | awk 'BEGIN {FS="|" } { print $2 }')
+fi
+
+if [ -z "$menu" ]; then
+   
+     menu=$MENU_OPCION_KIOSK
+
+fi
+
+if [ "$MENU_OPCION_KIOSK" = "$menu" ]; then
+
+   kiosk_default
+
+ elif [ "$MENU_OPCION_INSTALL" = "$menu" ]; then
+
+   kiosk_install 
+
+ elif [ "$MENU_OPCION_CHG_URL" = "$menu" ]; then
+
+   kiosk_chg_url
+   
+ elif [ "$MENU_OPCION_ADD_CRT" = "$menu" ]; then
+
+   kiosk_add_crt
+
+ elif [ "$MENU_OPCION_MENU_CHG_PWD" = "$menu" ]; then
+
+   kiosk_menu_chg_pwd
+
+ elif [ "$MENU_OPCION_ADMIN" = "$menu" ]; then
+
+   kiosk_admin
+
+fi
+

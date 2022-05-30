@@ -1,0 +1,26 @@
+#!/bin/bash
+
+############################################################################################
+#                                                                                          #
+# xinitrc_install : Instalar quiosco                              (frame-webkit-kiosk)     #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Systemback:                                                                              #
+#    Proyecto original:  https://sourceforge.net/projects/systemback/                      #
+#    Version 1.9.4:      https://github.com/fconidi/systemback-install_pack-1.9.4          #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Autor         : Felipe Muñoz Brieva - digitaliza.aapp@gmail.com                          #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Modificaciones:                                                                          #
+#                                                                                          #
+# 20/05/2022      Versión inicial                                                          #
+#   Felipe                                                                                 #
+#                                                                                          #
+############################################################################################
+
+systemback-sustart finstall

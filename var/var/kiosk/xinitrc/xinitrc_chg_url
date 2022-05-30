@@ -1,0 +1,68 @@
+#!/bin/bash
+
+############################################################################################
+#                                                                                          #
+# xinitrc_chg_url: Leer URL inicial del quiosco        (frame-webkit-kiosk)                #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Autor         : Felipe Muñoz Brieva - digitaliza.aapp@gmail.com                          #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Modificaciones:                                                                          #
+#                                                                                          #
+# 20/05/2022      Versión inicial                                                          #
+#   Felipe                                                                                 #
+#                                                                                          #
+############################################################################################
+
+. /var/kiosk/kiosk_config
+
+. $FILE_KIOSK_LIB
+
+xsetroot -cursor_name arrow
+
+url_prefix="FALSE"
+boton=0
+
+# Si no existe una URL valida no puede funcionar el quiosco
+until [ "$url_prefix" = "TRUE" ]
+do
+    resultado=$(yad --title="$CHG_TITULO" \
+                    --text="$CHG_TEXTO" \
+                    --center --width="650" \
+                    --height="50" \
+                    --borders=10 \
+                    --form \
+                    --field="" \
+                    --field="$CHG_FIJAR" "" TRUE \
+                    --button="gtk-ok:0" \
+               ) boton=$?
+
+    boton=$?
+
+    if [ $boton = "0" ]; then
+         kiosk_url=$(echo $resultado | awk 'BEGIN {FS="|" } { print $1 }')
+         fijar=$(echo $resultado | awk 'BEGIN {FS="|" } { print $2 }')
+    fi
+
+    check_prefix_url
+
+done
+
+if [ -z "$kiosk_url" ]; then
+
+      echo "$(head -n 1 $FILE_KIOSK_URL_DEFAULT)" > "$FILE_KIOSK_URL_TMP"
+
+  else
+
+      echo "$kiosk_url" > "$FILE_KIOSK_URL_TMP"
+     
+      if [ $fijar = "TRUE" ]; then
+
+          echo "$kiosk_url" > "$FILE_KIOSK_URL"
+     fi
+
+fi
+

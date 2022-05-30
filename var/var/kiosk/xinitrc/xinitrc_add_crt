@@ -1,0 +1,39 @@
+#!/bin/bash
+
+############################################################################################
+#                                                                                          #
+# xinitrc_add_crt: Añadir certificados en formato crt  (frame-webkit-kiosk)                #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Autor         : Felipe Muñoz Brieva - digitaliza.aapp@gmail.com                          #
+#                                                                                          #
+#------------------------------------------------------------------------------------------#
+#                                                                                          #
+# Modificaciones:                                                                          #
+#                                                                                          #
+# 20/05/2022      Versión inicial                                                          #
+#   Felipe                                                                                 #
+#                                                                                          #
+############################################################################################
+
+. /var/kiosk/kiosk_config
+
+xsetroot -cursor_name arrow
+
+fichero_crt=$(yad --file \
+                  --title=$CRT_TITULO \
+                  --height=350 \
+                  --width=100 \
+                  --center \
+                  --text=$MSG_CERTIFICADO_TITULO \
+                  --file-filter="$MSG_CERTIFICADO | *.crt")
+
+ans=$?
+ 
+if [ $ans -eq 0 ]; then
+     cp $fichero_crt /usr/local/share/ca-certificates/. > /dev/null
+     update-ca-certificates > /dev/null
+fi
+
+. $XINITRC_MENU
